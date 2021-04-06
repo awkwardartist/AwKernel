@@ -7,6 +7,9 @@ namespace Awkernel::Graphics {
                 RED, GREEN, BLUE,
                 PURPLE, PINK, BLACK, WHITE
             };
+            Colour(int Value){
+                this->Value = Value;
+            }
     };
     class GraphicsFunctions {
         public:
@@ -23,5 +26,23 @@ namespace Awkernel::Graphics {
                     GraphicsBuffer[i] = colour;
                 }
             }
+    };
+    class Console {
+        public:
+            int consolePos = 0;
+            Colour* consoleColour = new Colour(0x07);
+            Console();
+            void Write(char* toWrite){
+                if(consolePos == undefint)
+                    consolePos = 0;
+                for(int i = 0; toWrite[i] != '\0'; i++){
+                    GraphicsBuffer[consolePos] = toWrite[i];
+                    consolePos++;
+                    GraphicsBuffer[consolePos] = consoleColour->Value;
+                    consolePos++;
+                }
+            }
+        private:
+            int undefint;
     };
 }
