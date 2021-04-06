@@ -1,4 +1,5 @@
-*.iso
+AwkieOS.iso
 boot\
 *.o
 *.bin
+build.sh
