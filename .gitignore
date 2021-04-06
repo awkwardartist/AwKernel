@@ -1,0 +1,4 @@
+*.iso
+boot\
+*.o
+*.bin
