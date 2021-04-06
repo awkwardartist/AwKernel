@@ -5,7 +5,7 @@ extern "C" void kmain();
 using namespace Awkernel;
 using namespace Graphics;
 void kmain(){
-    Console* kconsole;
+    Console* kconsole=new Console();
     GraphicsFunctions::ClearScreen(320, 200, 0x07);
-    kconsole->Write((char*)"hello, world!");
+    kconsole->WriteChar('X');
 }

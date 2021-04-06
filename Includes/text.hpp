@@ -1,16 +1,5 @@
 namespace Awkernel::Graphics {
     static char* GraphicsBuffer = (char*)0xb8000;
-    class Colour {
-        public:
-            unsigned int Value = 0x00;
-            enum ColourCodes {
-                RED, GREEN, BLUE,
-                PURPLE, PINK, BLACK, WHITE
-            };
-            Colour(int Value){
-                this->Value = Value;
-            }
-    };
     class GraphicsFunctions {
         public:
             /*
@@ -29,20 +18,19 @@ namespace Awkernel::Graphics {
     };
     class Console {
         public:
-            int consolePos = 0;
-            Colour* consoleColour = new Colour(0x07);
-            Console();
-            void Write(char* toWrite){
-                if(consolePos == undefint)
-                    consolePos = 0;
-                for(int i = 0; toWrite[i] != '\0'; i++){
-                    GraphicsBuffer[consolePos] = toWrite[i];
-                    consolePos++;
-                    GraphicsBuffer[consolePos] = consoleColour->Value;
-                    consolePos++;
+            void Write(char* ToWrite){
+                for(int i = 0; ToWrite[i] != '\0'; i++){
+                    WriteChar(ToWrite[i]);
                 }
             }
+            void WriteChar(char c){
+                GraphicsBuffer[position] = c;
+                position++;
+                GraphicsBuffer[position] = consoleColour;
+                position++;
+            }
         private:
-            int undefint;
+            unsigned char consoleColour = 0x07;
+            int position = 0;
     };
 }
