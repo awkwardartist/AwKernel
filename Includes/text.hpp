@@ -18,6 +18,8 @@ namespace Awkernel::Graphics {
     };
     class Console {
         public:
+            int position = 0;
+            int consoleColour = 0x07;
             void Write(char* ToWrite){
                 for(int i = 0; ToWrite[i] != '\0'; i++){
                     WriteChar(ToWrite[i]);
@@ -29,8 +31,5 @@ namespace Awkernel::Graphics {
                 GraphicsBuffer[position] = consoleColour;
                 position++;
             }
-        private:
-            unsigned char consoleColour = 0x07;
-            int position = 0;
     };
 }
