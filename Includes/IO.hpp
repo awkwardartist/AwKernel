@@ -1,3 +1,4 @@
+#pragma once
 
 namespace Awkernel {
     inline unsigned char inb(unsigned int port)

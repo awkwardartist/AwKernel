@@ -1,3 +1,5 @@
+#pragma once
+
 namespace Awkernel::Graphics {
     static char* GraphicsBuffer = (char*)0xb8000;
     
