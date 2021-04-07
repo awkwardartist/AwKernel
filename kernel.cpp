@@ -1,19 +1,18 @@
 #include "Includes/text.hpp"
 #include "Includes/keyboard.hpp"
-#include "Includes/IO.hpp"
 
-extern "C" void kmain();
-
+extern "C" {
+    void kmain();
+    void outb (unsigned char __value, unsigned short int __port);
+}
 // using:
 using namespace Awkernel;
 using namespace Graphics;
 using namespace Keyboard;
-using namespace IO;
-
 Console console;
 // exec: 
 void kmain(){
     GraphicsFunctions::ClearScreen(320, 200, 0x07);
-    IOFunctions::inb(0x60);
-    console.Write("Hello, world!\nsome newline, huh.");
+    Cursor::Enable(0, 15);
+
 }

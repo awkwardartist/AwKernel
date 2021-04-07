@@ -1,6 +1,18 @@
 namespace Awkernel::Graphics {
     
+    extern "C" unsigned char inb(unsigned short int __port);
+    extern "C" void outb (unsigned char __value, unsigned short int __port);
+
     static char* GraphicsBuffer = (char*)0xb8000;
+    class Cursor {
+        public:
+            static void Enable(int cursor_start, int cursor_end){
+                outb(0x3D4, 0x0A);
+	            outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
+	            outb(0x3D4, 0x0B);
+	            outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
+            }
+    };
     class GraphicsFunctions {
         public:
             /*
@@ -17,11 +29,49 @@ namespace Awkernel::Graphics {
                 }
             }
     };
+    // P A I N
+    char* intToStr(int input){
+        // colon is the ascii code after '9'
+        char* ret;
+        // set all to 0
+        for(int i = 0; i < 10; i++) ret[i] = '0';
+        for(int i = 0; i < input; i++){
+            ret[9]++;
+            for(int j = 0; j < 10; j++){
+                if(ret[j] == ':'){
+                    ret[j] = '0';
+                    ret[j-1]++;
+                }
+            }
+        }
+        for(int i = 0; i < 10; i++){
+            if(ret[i] == '0') ret[i] = ' ';
+            else break;
+        } char* tempc = ret;
+        ret = "";
+        int index = 0;
+
+        for(int i = 0 ; i < 10; i++){
+            if(tempc[i] != ' ' && (int)tempc[i] >= 48 && (int)tempc[i] <= 57){
+                ret[index] = tempc[i];
+                index++;
+            }
+        }
+        return ret;
+    }
+    static int position = 0;
     class Console {
         public:
+            enum ConsoleColour {
+                BLACK = 0x0, BLUE = 0x1, GREEN = 0x2, CYAN = 0x3,
+                RED = 0x4, MAGENTA = 0x5, BROWN = 0x6, DEFAULT = 0x7,
+                DARK_GRAY = 0x8, LIGHT_BLUE = 0x9, LIGHT_GREEN = 0xA,
+                LIGHT_CYAN = 0xB, LIGHT_RED = 0xC, PINK = 0xD, YELLOW = 0xE,
+                WHITE = 0xF
+            };
             int size_x = 80;
             int size_y = 25;
-            int position = 0;
+
             int consoleColour = 0x07;
             void Write(char* ToWrite){
                 for(int i = 0; ToWrite[i] != '\0'; i++){
@@ -42,6 +92,33 @@ namespace Awkernel::Graphics {
                 position++;
                 GraphicsBuffer[position] = consoleColour;
                 position++;
+            }
+            void SuccessMessage(char* message){
+                consoleColour = ConsoleColour::DEFAULT;
+                Write("[ ");
+                consoleColour = ConsoleColour::GREEN;
+                Write("success ");
+                consoleColour = ConsoleColour::DEFAULT;
+                Write("] ");
+                Write(message + '\n');
+            }
+            void ErrorMessage(char* message){
+                consoleColour = ConsoleColour::DEFAULT;
+                Write("[ ");
+                consoleColour = ConsoleColour::RED;
+                Write("error");
+                consoleColour = ConsoleColour::DEFAULT;
+                Write("] ");
+                Write(message + '\n');
+            }
+            void DialogueMessage(char* message){
+                consoleColour = ConsoleColour::DEFAULT;
+                Write("[ ");
+                consoleColour = ConsoleColour::CYAN;
+                Write("message");
+                consoleColour = ConsoleColour::DEFAULT;
+                Write("] ");
+                Write(message + '\n');
             }
     };
 }
