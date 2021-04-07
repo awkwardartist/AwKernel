@@ -3,7 +3,7 @@
 
 extern "C" {
     void kmain();
-    void outb (unsigned char __value, unsigned short int __port);
+    void outb (unsigned int __value, unsigned short int __port);
 }
 // using:
 using namespace Awkernel;
@@ -13,6 +13,4 @@ Console console;
 // exec: 
 void kmain(){
     GraphicsFunctions::ClearScreen(320, 200, 0x07);
-    Cursor::Enable(0, 15);
-
 }

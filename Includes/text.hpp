@@ -1,9 +1,9 @@
 namespace Awkernel::Graphics {
-    
     extern "C" unsigned char inb(unsigned short int __port);
-    extern "C" void outb (unsigned char __value, unsigned short int __port);
+    extern "C" void outb (unsigned int __value, unsigned short int __port);
 
     static char* GraphicsBuffer = (char*)0xb8000;
+    
     class Cursor {
         public:
             static void Enable(int cursor_start, int cursor_end){
@@ -11,6 +11,19 @@ namespace Awkernel::Graphics {
 	            outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
 	            outb(0x3D4, 0x0B);
 	            outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
+            }
+            static void Disable(){
+                outb(0x3D4, 0x0A);
+	            outb(0x3D5, 0x20);
+            }
+            static void Move(int x, int y){
+                int size_x = 80;
+                int pos = y * size_x + x;
+
+                outb(0x3D4, 0x0F);
+                outb(0x3D5, (int) (pos & 0xFF));
+                outb(0x3D4, 0x0E);
+                outb(0x3D5, (int) ((pos >> 8) & 0xFF));
             }
     };
     class GraphicsFunctions {
