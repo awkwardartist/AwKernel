@@ -1,11 +1,14 @@
 namespace Awkernel::Graphics {
-    extern "C" unsigned char inb(unsigned short int __port);
-    extern "C" void outb (unsigned int __value, unsigned short int __port);
-
     static char* GraphicsBuffer = (char*)0xb8000;
     
     class Cursor {
         public:
+            static int GetX(){
+                return get_cursor_position() % 80;
+            }
+            static int GeyY(){
+                return get_cursor_position() / 80;
+            }
             static void Enable(int cursor_start, int cursor_end){
                 outb(0x3D4, 0x0A);
 	            outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
@@ -24,6 +27,16 @@ namespace Awkernel::Graphics {
                 outb(0x3D5, (int) (pos & 0xFF));
                 outb(0x3D4, 0x0E);
                 outb(0x3D5, (int) ((pos >> 8) & 0xFF));
+            }
+        private:
+            static uint16_t get_cursor_position(void)
+            {
+                uint16_t pos = 0;
+                outb(0x3D4, 0x0F);
+                pos |= inb(0x3D5);
+                outb(0x3D4, 0x0E);
+                pos |= ((uint16_t)inb(0x3D5)) << 8;
+                return pos;
             }
     };
     class GraphicsFunctions {
@@ -99,12 +112,14 @@ namespace Awkernel::Graphics {
                         i++;
                     position += i * 4;
                     position -= j + (size_x * 2);
+                    Cursor::Move(position / 2, 0);
                     return;
                 } 
                 GraphicsBuffer[position] = c;
                 position++;
                 GraphicsBuffer[position] = consoleColour;
                 position++;
+                Cursor::Move(position / 2, 0);
             }
             void SuccessMessage(char* message){
                 consoleColour = ConsoleColour::DEFAULT;
