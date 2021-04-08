@@ -1,4 +1,7 @@
 #pragma once
+#include "keyboard.hpp"
+
+using Awkernel::Keyboard::KernelKeyboard;
 
 namespace Awkernel::Graphics {
     static char* GraphicsBuffer = (char*)0xb8000;
@@ -99,8 +102,21 @@ namespace Awkernel::Graphics {
             };
             int size_x = 80;
             int size_y = 25;
-
             int consoleColour = 0x07;
+
+            char ReadKey(){
+                char ch = keyboard.GetChar();
+                if(ch == 0x0D) ch = 0x00;
+                if(ch == 0x00){
+                    KernelKeyboard::SpKey key =
+                    (KernelKeyboard::SpKey)keyboard.LastScancode();
+                    switch(key){
+                        case KernelKeyboard::ENTER: return '\n';
+                        case KernelKeyboard::DEL: return '\b';
+                    }
+                } 
+                return ch;
+            }
             void Write(char* ToWrite){
                 for(int i = 0; ToWrite[i] != '\0'; i++){
                     WriteChar(ToWrite[i]);
@@ -150,5 +166,7 @@ namespace Awkernel::Graphics {
                 Write("] ");
                 Write(message + '\n');
             }
+        private:
+            static Keyboard::KernelKeyboard keyboard;
     };
 }

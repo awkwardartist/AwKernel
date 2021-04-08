@@ -3,7 +3,6 @@
 #include "Includes/IO.hpp"
 #include "Includes/text.hpp"
 #include "Includes/keyboard.hpp"
-#include "AwkFS/ATA.hpp"
 
 
 // using:
@@ -14,8 +13,6 @@ Console console;
 
 // exec: 
 void kmain(){
-    GraphicsFunctions::ClearScreen(25, 80, 0x00);
-    if(ATA::ATA::Identify(ATA::ATA::DriveType::MASTER)){
-        console.Write("master exists!");
-    }
+    while (true)
+        console.WriteChar(console.ReadKey());
 }
