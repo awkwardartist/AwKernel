@@ -67,7 +67,7 @@ namespace Awkernel::Graphics {
             ret[9]++;
             for(int j = 0; j < 10; j++){
                 if(ret[j] == ':'){
-                    ret[j] = '0';
+                    ret[j] = '0'; 
                     ret[j-1]++;
                 }
             }

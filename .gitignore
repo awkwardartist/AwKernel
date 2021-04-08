@@ -1,6 +1,4 @@
 AwkieOS.iso
-boot\
 *.o
 *.bin
-build.sh
 *.vscode

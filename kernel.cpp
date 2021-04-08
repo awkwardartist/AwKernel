@@ -3,7 +3,7 @@
 #include "Includes/IO.hpp"
 #include "Includes/text.hpp"
 #include "Includes/keyboard.hpp"
-
+#include "AwkFS/ATA.hpp"
 
 
 // using:
@@ -14,7 +14,8 @@ Console console;
 
 // exec: 
 void kmain(){
-    // to set ah and al, use: ax = (ah_value << 8) | al_value
-    SetHighAndLow(HLRegister::ax, 0x00, 0x13);
-    int32(0x10, &registers);
+    GraphicsFunctions::ClearScreen(25, 80, 0x00);
+    if(ATA::ATA::Identify(ATA::ATA::DriveType::MASTER)){
+        console.Write("master exists!");
+    }
 }

@@ -1,12 +1,13 @@
 #pragma once
 
 extern "C" {
-    void int32(unsigned char intnum, regs16_t* regs);
-    void kmain();
     struct regs16_t {
         unsigned short di, si, bp, sp, bx, dx, cx, ax;
         unsigned short gs, fs, es, ds, eflags;
     } __attribute__((packed));
+    
+    void int32(unsigned char intnum, regs16_t* regs);
+    void kmain();
 }
 regs16_t registers;
 
@@ -18,6 +19,7 @@ enum HLRegister {
 */
 void SetHighAndLow(HLRegister Base_Register, unsigned short high, unsigned short low){
     unsigned short Value = (high << 8) | low;
+    
     switch(Base_Register){
         case bx: registers.bx = Value;
         break;
