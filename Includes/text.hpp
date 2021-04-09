@@ -124,15 +124,20 @@ namespace Awkernel::Graphics {
             }
             void WriteChar(char c){
                 if(c == '\n'){
-                    int i = position;
-                    int j = position;
-                    while(i % size_x * 2)
-                        i++;
-                    position += i * 4;
-                    position -= j + (size_x * 2);
+                    // size_x = 80
+                    // size_y = 25
+
+                    int xpos = Get_Col(position);
+                    position += (size_x - xpos) * 2;
                     Cursor::Move(position / 2, 0);
                     return;
-                } 
+                } else if(c == '\b'){
+                    GraphicsBuffer[position] = ' ';
+                    GraphicsBuffer[position+1] = 0x07;
+                    ShiftAll(position);
+                    return;
+                }
+
                 GraphicsBuffer[position] = c;
                 position++;
                 GraphicsBuffer[position] = consoleColour;
@@ -167,6 +172,31 @@ namespace Awkernel::Graphics {
                 Write(message + '\n');
             }
         private:
+            void ShiftAll(int startingpos){
+                int ogpos = startingpos;
+                for(; startingpos < (size_x * size_y) * 2; startingpos++){
+                    char temp = GraphicsBuffer[startingpos];
+                    GraphicsBuffer[startingpos] = GraphicsBuffer[startingpos+1];
+                    GraphicsBuffer[startingpos+1] = temp;
+                }
+                
+                for(startingpos = ogpos; startingpos < (size_x * size_y) * 2; startingpos++){
+                    char temp = GraphicsBuffer[startingpos];
+                    GraphicsBuffer[startingpos] = GraphicsBuffer[startingpos+1];
+                    GraphicsBuffer[startingpos+1] = temp;
+                }
+                GraphicsBuffer[startingpos] = ' ';
+                GraphicsBuffer[startingpos+1]=0x07;
+            }
             static Keyboard::KernelKeyboard keyboard;
+            int Get_Offset(int x, int y){
+                return 2 * (y * size_x + x);
+            }
+            int Get_Row(int offset){
+                return offset / (2 * size_x);
+            }
+            int Get_Col(int offset){
+                return (offset - (Get_Row(offset) * 2 * size_x)) / 2;
+            }
     };
 }

@@ -13,6 +13,7 @@ Console console;
 
 // exec: 
 void kmain(){
+    Graphics::GraphicsFunctions::ClearScreen(80, 25, 0x00);
     while (true)
         console.WriteChar(console.ReadKey());
 }
