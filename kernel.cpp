@@ -13,10 +13,11 @@ Console console;
 
 // exec: 
 void kmain(){
-    GraphicsFunctions::ClearScreen(80, 25, 0x00);
-    List<string> ls = List<string>();
-    ls.Add("hello, world!");
-    ls.Add("hello, world dos!");
-    console.Write(ls[0].Value());
-    console.Write(ls[1].Value());
+    
+    List<char> ls = List<char>();
+    ls.Add('h');
+    ls.Add('e');
+    ls.Add('l');
+    ls.Reverse();
+    console.WriteChar(ls[0]);
 }

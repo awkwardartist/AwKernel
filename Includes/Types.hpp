@@ -102,6 +102,7 @@ template<class T> class List {
             ARR[Len] = object;
             Len++;
         }
+        
         void AddRange(T object[]){
             int i = 0;
             while(true){
@@ -112,9 +113,55 @@ template<class T> class List {
         T operator[](int index) {
             return this->ARR[index];
         }
+        // non zero-based count of objects in this list
+        int Count(){return Len;}
+        const List<T> AsReadOnly(){
+            T ret[Count()];
+            for(int i = 0; i < Count(); i++){
+                ret[i] = ARR[i];
+            }
+            const T ret2[Count()] = {(const T*)ret};
+            return ret2;
+        }
         
+        void Insert(T value, int index){
+            ExpandEmpty(1);
+            for(int x = Len; x > index; x--){
+                ARR[x] = ARR[x-1];
+            }
+            ARR[index] = value;
+        }
+
+        // returns a new array (technically a new pointer)
+        T* ToArray(){
+            T* ret;
+            for(int i = 0; i < Count(); i++){
+                ret[i] = ARR[i];
+            }
+            return ret;
+        }
+
+        T* GetPointer(){
+            return ARR;
+        }
+        void Reverse(){
+            for(int i = 0; i < Len - 1; i++){
+                T obj = ARR[Len];
+                ShiftAllForward();
+                ARR[0] = obj;
+            }
+        }
     private:
-        
         int Len;
         T * ARR;
+
+        void ShiftAllForward(){
+            for(int x = Len; x > -1; x--){
+                ARR[x] = ARR[x-1];
+            }
+        }
+        void ExpandEmpty(int count){
+            for(int i = 0; i < count; i++)
+                Add(0);
+        }
 };
