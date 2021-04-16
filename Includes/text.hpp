@@ -113,9 +113,16 @@ namespace Awkernel::Graphics {
                     switch(key){
                         case KernelKeyboard::ENTER: return '\n';
                         case KernelKeyboard::DEL: return '\b';
+                        case KernelKeyboard::DARR: return '↓';
+                        case KernelKeyboard::UARR: return '↑';
+                        case KernelKeyboard::RARR: return '→';
+                        case KernelKeyboard::LARR: return '←';
                     }
                 } 
                 return ch;
+            }
+            void Write(const char* ToWrite){
+                Write((char*)ToWrite);
             }
             void Write(char* ToWrite){
                 for(int i = 0; ToWrite[i] != '\0'; i++){
@@ -123,21 +130,43 @@ namespace Awkernel::Graphics {
                 }
             }
             void WriteChar(char c){
-                if(c == '\n'){
-                    // size_x = 80
-                    // size_y = 25
-
-                    int xpos = Get_Col(position);
-                    position += (size_x - xpos) * 2;
-                    Cursor::Move(position / 2, 0);
-                    return;
-                } else if(c == '\b'){
-                    GraphicsBuffer[position] = ' ';
-                    GraphicsBuffer[position+1] = 0x07;
-                    ShiftAll(position);
-                    return;
+                // special character support
+                /*
+                    case KernelKeyboard::DARR: return '↓';
+                        case KernelKeyboard::UARR: return '↑';
+                        case KernelKeyboard::RARR: return '→';
+                        case KernelKeyboard::LARR: return '←';
+                */
+                switch(c){
+                    case '\n': {
+                        int xpos = Get_Col(position);
+                        position += (size_x - xpos) * 2;
+                        Cursor::Move(position / 2, 0);
+                        return;
+                    }
+                    case '\b':{
+                        if(!CanBackspace) return;
+                        position -= 2;
+                        WriteChar(' ');
+                        int i = position;
+                        position -= 2;
+                        for(; i < (size_x * size_y) * 2; i++){
+                            GraphicsBuffer[i-2] = GraphicsBuffer[i];
+                        }
+                        position -= 2;
+                        return;
+                    }
+                    case (char)'←': {
+                        position -= 2;
+                        return;
+                    }
+                    case (char)'→': {
+                        position += 2;
+                        return;
+                    }
+                    default:
+                        break;
                 }
-
                 GraphicsBuffer[position] = c;
                 position++;
                 GraphicsBuffer[position] = consoleColour;
@@ -172,21 +201,14 @@ namespace Awkernel::Graphics {
                 Write(message + '\n');
             }
         private:
+            // control if the backspace actually does anything
+            bool CanBackspace = false;
+
             void ShiftAll(int startingpos){
                 int ogpos = startingpos;
-                for(; startingpos < (size_x * size_y) * 2; startingpos++){
-                    char temp = GraphicsBuffer[startingpos];
-                    GraphicsBuffer[startingpos] = GraphicsBuffer[startingpos+1];
-                    GraphicsBuffer[startingpos+1] = temp;
+                for(; startingpos <= (size_x * size_y) * 2; startingpos++){
+                    GraphicsBuffer[startingpos+2] = GraphicsBuffer[startingpos];
                 }
-                
-                for(startingpos = ogpos; startingpos < (size_x * size_y) * 2; startingpos++){
-                    char temp = GraphicsBuffer[startingpos];
-                    GraphicsBuffer[startingpos] = GraphicsBuffer[startingpos+1];
-                    GraphicsBuffer[startingpos+1] = temp;
-                }
-                GraphicsBuffer[startingpos] = ' ';
-                GraphicsBuffer[startingpos+1]=0x07;
             }
             static Keyboard::KernelKeyboard keyboard;
             int Get_Offset(int x, int y){

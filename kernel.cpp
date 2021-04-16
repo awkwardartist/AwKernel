@@ -3,7 +3,7 @@
 #include "Includes/IO.hpp"
 #include "Includes/text.hpp"
 #include "Includes/keyboard.hpp"
-
+#include "Includes/Thread.hpp"
 
 // using:
 using namespace Awkernel;
@@ -13,7 +13,10 @@ Console console;
 
 // exec: 
 void kmain(){
-    Graphics::GraphicsFunctions::ClearScreen(80, 25, 0x00);
-    while (true)
-        console.WriteChar(console.ReadKey());
+    GraphicsFunctions::ClearScreen(80, 25, 0x00);
+    List<string> ls = List<string>();
+    ls.Add("hello, world!");
+    ls.Add("hello, world dos!");
+    console.Write(ls[0].Value());
+    console.Write(ls[1].Value());
 }
