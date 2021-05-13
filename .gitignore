@@ -2,3 +2,4 @@ AwkieOS.iso
 *.o
 *.bin
 *.vscode
+.bashrc

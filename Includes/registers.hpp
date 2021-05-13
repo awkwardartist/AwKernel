@@ -1,5 +1,6 @@
 #pragma once
 #include "Types.hpp"
+using namespace Awkernel;
 extern "C" {
     struct regs16_t {
         unsigned short di, si, bp, sp, bx, dx, cx, ax;
