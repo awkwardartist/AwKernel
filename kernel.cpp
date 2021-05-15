@@ -3,6 +3,7 @@
 #include "Includes/Text.hpp"
 #include "Includes/Types.hpp"
 #include "Includes/FS.hpp"
+#include "Includes/Exec.hpp"
 
 extern "C" void kmain();
 // using:
@@ -15,7 +16,13 @@ void kmain(){
     for(int i = 0; i < 25; i++)
         Console.Write('\n');
     Console.CursorPos = 0;
-
-    Console.Write("Hello, World!");
-    auto drives = Drive::FindDrives();
+    Console.Success("Buwut suwuccess\n");
+    List<byte> b = List<byte>();
+    b.Add(0x2A);
+    b.Add(0x20);
+    Program p = Program(100, b.ToArray());
+    int stack = 0;
+    p.Push(10);
+    p.Pop((uint32_t*)&stack);
+    Console.Write(stack);
 }

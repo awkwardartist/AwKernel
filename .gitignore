@@ -2,4 +2,6 @@ AwkieOS.iso
 *.o
 *.bin
 *.vscode
-.bashrc
+.bashrc 
+experimentFile.asm
+exp.bin

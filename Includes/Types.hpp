@@ -22,7 +22,13 @@ namespace Awkernel {
         T& operator[](int index) {
             return buffer[index];
         }
-        
+        auto ToArray() {
+            T someArr[bufferindex];
+            for(int i = 0; i < bufferindex; i++){
+                someArr[i] = buffer[i];
+            }
+            return someArr;
+        }
     private:
         int bufferindex = 0;
         T *buffer;
