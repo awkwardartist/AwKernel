@@ -1,7 +1,0 @@
-AwkieOS.iso
-*.o
-*.bin
-*.vscode
-.bashrc 
-experimentFile.asm
-exp.bin
