@@ -1,4 +1,5 @@
 #include "types.h"
+#include "pic.h"
 
 /* Defines an IDT entry */
 struct idt_entry
@@ -43,7 +44,9 @@ void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, uns
 	idt[num].base_lo = ((uint16_t)base & 0xFF00) >> 8;
 	idt[num].base_hi = (uint16_t)base & 0x00FF;
 }
-
+void idt_add_intr(uint8_t num, uint32_t base) {
+	idt_set_gate(num, base, 0x8, 0xE);
+}
 extern void SYSCALL();
 /* Installs the IDT */
 void idt_install()
@@ -58,5 +61,5 @@ void idt_install()
 		idt[i] = null;
 
     /* Points the processor's internal register to the new IDT */
-    idt_load();
+	idt_load();
 }

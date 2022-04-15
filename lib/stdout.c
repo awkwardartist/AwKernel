@@ -4,6 +4,7 @@
 #define BUFFER 0xb8000
 #define DBUFFER (0xb8000+(80*25)*2)
 
+extern void SCROLL();
 enum {
 	BLACK, BLUE, GREEN,
 	CYAN, RED, MAGENTA,
@@ -26,28 +27,48 @@ char *GET_CURRENT() {
 	int offset = (y * (console_width)) + x; // calculate offset
 	return &(b[offset*2]); // return buffer using offset
 }
-
+char *GET_LOC(uint32_t X, uint32_t Y) {
+	uint32_t x_bak = x, y_bak = y; // store x and y
+	x = X; y = Y; // assign
+	
+	char *ret = GET_CURRENT(); // get ret
+	x = x_bak; y = y_bak; // restore
+	return ret;
+}
 // copies the secondary buffer to the actual graphics buffer
 void UPDATE_CONSOLE() {
 	memcpy((void*)BUFFER, (void*)DBUFFER, (80*25)*2); // copy memory
 }
 
 void RECALC_POS() {
+	// auto newline
 	if(x >= console_width) {
 		// move to next row
-		x = 0;
+		x -= console_width;
+		if(x < 0) x = 0;
 		y++;
 	}
+
+	// auto scroll
+	if(y >= console_height-1) {
+		SCROLL();
+	}
+
 }
 
 // writes a single character to the
 // secondary buffer
 void WRITE_C(char c) {
+	// special characters:
 	switch(c) {
 		case '\n':
 			x = 0;
 			y++;
 			return; // end
+		case '\t':
+			while(++x % 4); // increment until multiple of 4
+			RECALC_POS();
+			return;
 	}
 
 	RECALC_POS(); // make sure no errors occur
@@ -106,7 +127,16 @@ void clear() {
 	memclr((void*)BUFFER, 80*25*2); // also clear
 }
 
-// int 0x60 OR int 96
-void CONSOLE_DRIVER() {
-	
+// scroll up one character
+void SCROLL() {
+	for(int _y = 1; _y < console_height; _y++) {
+		char *src = GET_LOC(0, _y); // get position of layer
+		char *dst = GET_LOC(0, _y-1); // get last layer
+		memcpy((void*)dst, (void*)src, console_width*2); // copy up one
+	}
+	char nullchr[console_width];
+	memcpy((void*)GET_LOC(0, console_height), (void*)nullchr, console_width);
+	UPDATE_CONSOLE();
+	y--;
 }
+

@@ -1,14 +1,10 @@
 #include "memory.h"
 #include "stdout.h" // a minimalistic console driver
 #include "pic.h"
+#include "int.h"
 
+extern void _c_int();
 extern void kmain(void);
-extern void gdt_install();
-extern void idt_install();
-
-void throw_irq() {
-	return;
-}
 
 extern void CONSOLE_INT(void);
 void kmain() {
@@ -27,15 +23,13 @@ void kmain() {
 	info("initializing PIC (0x90-0x97)");
 	pic_remap(0x90, 0x97);
 	success("initialized PIC");
-	
 	info("set all standard irq masks");
 	for(int i = 0; i < 16; i++)
 		irq_set_mask(i);
 	success("set, now enable interrupts");
 	asm("sti");
 	success("interrupts enabled");
-	
-	IDENTIFY(1);
-	success("done");
+
+	idt_add_intr(0x10, &_c_int);
 	while(1);
 }
